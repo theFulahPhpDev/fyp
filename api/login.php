@@ -1,4 +1,5 @@
 <?php
+session_start();
     // required headers
     header("Access-Control-Allow-Origin: http://localhost:8000/zawaj_doctors/");
     header("Content-Type: application/json; charset=UTF-8");
@@ -22,41 +23,23 @@
     
     // set product property values
     $user->email = $data->email;
-    $email_exists = $user->emailExists();
     
-    // generate json web token
-    include_once 'config/core.php';
-    include_once 'libs/php-jwt-master/src/BeforeValidException.php';
-    include_once 'libs/php-jwt-master/src/ExpiredException.php';
-    include_once 'libs/php-jwt-master/src/SignatureInvalidException.php';
-    include_once 'libs/php-jwt-master/src/JWT.php';
-    use \Firebase\JWT\JWT;
+    $email_exists = $user->check_email_exists();
+    
     
     // check if email exists and if password is correct
     if($email_exists && password_verify($data->password, $user->password)){
-    
-        $token = array(
-        "iss" => $iss,
-        "aud" => $aud,
-        "iat" => $iat,
-        "nbf" => $nbf,
-        "data" => array(
-            "id" => $user->id,
-            "firstname" => $user->firstname,
-            "lastname" => $user->lastname,
-            "email" => $user->email
-        )
-        );
-    
+        
+        $_SESSION['username'] = $user->username;
+        $_SESSION['id'] = $user->id;
         // set response code
         http_response_code(200);
-    
-        // generate jwt
-        $jwt = JWT::encode($token, $key);
+        // tell the user login was successful
         echo json_encode(
                 array(
                     "message" => "Successful login.",
-                    "jwt" => $jwt
+                    "Username" => $_SESSION['username'],
+                    "User ID" => $_SESSION['id']
                 )
             );
     
