@@ -21,21 +21,22 @@
                     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                         <div class="navbar-nav ml-auto">
                         <a class="nav-item nav-link" href="index.php" id='home'>Home</a>
+                        <a class="nav-item nav-link" href="account.php">Account</a>
                         <a class="nav-item nav-link" href="logout.php">Logout</a>
-                        <a class="nav-item nav-link" href="account.php" id="update_account">Account</a>
+                        
                         
                         </div>
                     </div>
                 </nav>
-                <div class="row">
-                    <div class="col">
+                <div class="row justify-content-md-center">
+                    <div class="col-md-8">
                         <!-- where prompt / messages will appear -->
                         <div id="response">
                         </div>
                         <h5>Click the button to update your account details</h5>
                         <p><button id="showForm">Show</button></p>
                         <h5>Click this button to delete your account</h5>
-                        <p><button id="deleteAccount">Show</button></p>
+                        <p><button id="deleteAccount">Delete</button></p>
                         <!-- where main content will appear -->
                         <div id="content">
                             
@@ -95,7 +96,10 @@
                                     <label for="password">Password</label>
                                     <input type="password" class="form-control" name="password" id="password" />
                                 </div>
-                                <input  id="user_id" value="` + response.id + `">
+                                <div class="form-group">
+                                    
+                                    <input type="hidden"" class="form-control" name="id" id="id" required value="` + response.id+ `" />
+                                </div>
                                 <button type='submit' class='btn btn-primary'>
                                     Save Changes
                                 </button>
@@ -111,7 +115,7 @@
                 
                 var update_account_form=$(this);          
                 var form_data=JSON.stringify(update_account_form.serializeObject());  
-                var file = $('#profile_pic')[0].files[0];
+                //var file = $('#profile_pic')[0].files[0];
                 // submit form data to api
                 $.ajax({
                     url: "api/update_user.php",

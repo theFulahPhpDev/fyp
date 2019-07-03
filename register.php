@@ -41,8 +41,8 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col" id="form1">
+            <div class="row justify-content-md-center">
+                <div class="col-md-8" id="form1">
                     <h2>Sign Up</h2>
                     <form id='sign_up_form'>
                         <div class="form-group">
@@ -141,6 +141,9 @@
                             // show home page & tell the user it was a successful login
                             showHomePage();
                             $('#response').html("<div class='alert alert-success'>Successful login.</div>");
+                            setTimeout(function(){// wait for 5 secs(2)
+                                location.href="index.php"; // then reload the page.(3)
+                            }, 5000); 
                         },
                         error: function(xhr, resp, text){
                             // on error, tell the user login has failed & empty the input boxes
@@ -191,7 +194,7 @@
 
                     // login page html
                     var html = `
-                        <div class="col" id="form2">
+                        <div class="col-md-8" id="form2">
                             <h2>Login</h2>
                             <form id='login_form'>
                                 <div class='form-group'>

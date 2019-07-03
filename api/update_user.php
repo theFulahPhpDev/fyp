@@ -20,12 +20,13 @@
     // instantiate user object
     $user = new User($db);
     
-    $id = isset($_SESSION['id']) ? $_SESSION['id'] : die();
+    
 
     // get posted data
     $data = json_decode(file_get_contents("php://input"));
     
-    
+    // Set ID to update
+    $user->id = $data->id;
 
     // set user property values
     $user->firstname = $data->firstname;
@@ -37,7 +38,7 @@
     
     
     // create the product
-    if($user->update($id)){
+    if($user->update()){
         
         
         // set response code

@@ -16,7 +16,8 @@
         public $points;
         public $email;
         public $password;
-    
+        public $badge;
+        
         // constructor
         public function __construct($db){
             $this->conn = $db;
@@ -34,6 +35,7 @@
                 gender = :gender,
                 profile_pic = :profile_pic,
                 points = :points,
+                badge = :badge,
                 email = :email,
                 password = :password";
         
@@ -70,6 +72,8 @@
             $stmt->bindParam(':profile_pic', $profile_pic);
             $points = 20;
             $stmt->bindParam(':points', $points);
+            $badge = '<span class="badge badge-secondary">Learner</span>';
+            $stmt->bindParam(':badge', $badge);
 
             // execute the query, also check if query was successful
             if($stmt->execute()){
@@ -180,6 +184,8 @@
             $this->username = $row['username'];
             $this->email = $row['email'];
             $this->profile_pic = $row['profile_pic'];
+            $this->badge = $row['badge'];
+
             // get number of rows
             $num = $stmt->rowCount();
             if($num>0){
@@ -188,7 +194,7 @@
                 return false;
         }
         // update a user record
-        public function update($id){
+        public function update(){
         
             // if password needs to be updated
             $password_set=!empty($this->password) ? ", password = :password" : "";
@@ -212,7 +218,7 @@
             $this->username=htmlspecialchars(strip_tags($this->username));
             $this->email=htmlspecialchars(strip_tags($this->email));
             //$this->profile_pic=htmlspecialchars(strip_tags($this->profile_pic));
-            $this->id = htmlspecialchars(strip_tags($this->id));
+            //$this->id = htmlspecialchars(strip_tags($this->id));
         
             // bind the values from the form
             $stmt->bindParam(':firstname', $this->firstname);
@@ -230,7 +236,7 @@
             }
         
             // unique ID of record to be edited
-            $stmt->bindParam(':id', $id);
+            $stmt->bindParam(':id', $this->id);
         
             // execute the query
             if($stmt->execute()){
@@ -291,6 +297,92 @@
             printf("Error: %s.\n", $stmt->error);
 
             return false;
-    }
+        }
+
+        public function addPoints($points,$username) {
+            // if no posted password, do not update the password
+            $query = "UPDATE " . $this->table_name . "
+                    SET
+                        points = points + :points
+                    WHERE username = :username";
+        
+            // prepare the query
+            $stmt = $this->conn->prepare($query);
+        
+            
+            
+            $stmt->bindParam(':points', $points);
+            
+            
+            
+            
+            // unique username of record to be edited
+            $stmt->bindParam(':username', $username);
+        
+            // execute the query
+            if($stmt->execute()){
+                return true;
+                
+            }
+            
+            return false;
+
+        }
+
+        
+        
+
+        public function update_badge($username) {
+            // if no posted password, do not update the password
+            $query = "UPDATE " . $this->table_name . "
+                    SET
+                        badge = :badge
+                    WHERE username = :username";
+        
+            // prepare the query
+            $stmt = $this->conn->prepare($query);
+        
+            /*$num_points =  $this->username->points;
+            if($num_points >= 20 && $num_points <= 50){
+                $badge = '<span class="badge badge-primary">Nurse</span>';
+            }  elseif($num_points > 50 && $num_points <= 140){
+                $badge = '<span class="badge badge-warning">Doctor</span>';
+            } elseif($num_points > 140 && $num_points <= 200){
+                $badge = '<span class="label label-success">Expert</span>';
+            } elseif($num_points > 200 && $num_points <= 260){
+                $badge = '<span class="label label-danger">Professor</span>';
+            }*/
+
+            $badge = '<span class="badge badge-primary">Student</span>';
+                
+
+            $stmt->bindParam(':badge', $badge);
+            
+        
+            // unique username of record to be edited
+            $stmt->bindParam(':username', $username);
+        
+            // execute the query
+            if($stmt->execute()){
+                return true;
+            }
+        
+            return false;
+        }
+
+        // Get Users
+        public function read() {
+            // Create query
+            $query = 'SELECT * FROM ' . $this->table_name.' ORDER BY points DESC';
+            
+            // Prepare statement
+            $stmt = $this->conn->prepare($query);
+    
+            // Execute query
+            $stmt->execute();
+    
+            return $stmt;
+        }
+
     }  
         

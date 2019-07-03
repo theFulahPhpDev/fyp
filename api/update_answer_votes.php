@@ -9,35 +9,26 @@
 
     // files needed to connect to database
     include_once 'config/database.php';
-    include_once 'models/user.php';
+    include_once 'models/Answer.php';
     
     // get database connection
     $database = new Database();
     $db = $database->getConnection();
 
-  // Instantiate user object
-  $user = new User($db);
-  // Get ID
-  $id = isset($_SESSION['id']) ? $_SESSION['id'] : die();
-  // Get user
-  $user->read_single($id);
+    // Instantiate answer object
+    $answer = new Answer($db);
 
-  // Create array
-  $user_arr = array(
-    'id' => $user->id,
-    'firstname' => $user->firstname,
-    'lastname' => $user->lastname,
-    'username' => $user->username,
-    'email' => $user->email,
-    'profile_pic' => $user->profile_pic,
-    'badge' => $user->badge
-  );
+    $data = json_decode(file_get_contents("php://input"));
 
-    if($user->read_single($id)){
+    // Get ID
+    $answer->id = $data->answer_id;
+    
+
+    if($answer->update_votes()){
         // Make JSON
-        echo json_encode($user_arr);
+        echo json_encode(array("message" => "Answer has been updated"));
     }else {
         // show error message
-        echo json_encode(array("message" => "Unable populate form."));
+        echo json_encode(array("message" => "Answer not updated"));
     }
   
